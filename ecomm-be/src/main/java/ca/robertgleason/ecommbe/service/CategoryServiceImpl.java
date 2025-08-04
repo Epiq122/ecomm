@@ -31,6 +31,7 @@ public class CategoryServiceImpl implements CategoryService {
         category.setCategoryId(newId);
         categories.add(category);
 
+
     }
 
     @Override
