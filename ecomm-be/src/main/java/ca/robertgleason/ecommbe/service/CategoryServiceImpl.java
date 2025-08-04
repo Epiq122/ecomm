@@ -32,14 +32,17 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public String deleteCategory(Long categoryId) {
+        // this method deletes a category by its ID
         boolean exists = categories.stream()
                 .anyMatch(category -> category.getCategoryId().equals(categoryId));
 
+        // this checks if the category exists before attempting to delete it
         if (!exists) {
             log.warn("Attempted to delete non-existent category with ID: {}", categoryId);
             return "Category with ID " + categoryId + " not found";
         }
 
+        // this removes the category from the list
         categories.removeIf(category -> category.getCategoryId().equals(categoryId));
         log.info("Category with ID {} deleted successfully", categoryId);
         return "Category with ID " + categoryId + " deleted";
