@@ -40,4 +40,14 @@ public class CategoryController {
         }
 
     }
+
+    @PutMapping("/api/public/categories/{categoryId}")
+    public ResponseEntity<String> updateCategory(@PathVariable Long categoryId, @RequestBody Category category) {
+        try {
+            categoryService.updateCategory(categoryId, category);
+            return ResponseEntity.ok("Category updated successfully");
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+        }
+    }
 }

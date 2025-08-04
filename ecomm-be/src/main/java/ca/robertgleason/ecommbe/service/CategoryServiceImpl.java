@@ -35,7 +35,6 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-
     public String deleteCategory(Long categoryId) {
         // this method deletes a category by its ID
         boolean exists = categories.stream()
@@ -51,6 +50,28 @@ public class CategoryServiceImpl implements CategoryService {
         categories.removeIf(category -> category.getCategoryId().equals(categoryId));
         log.info("Category with ID {} deleted successfully", categoryId);
         throw new ResponseStatusException(HttpStatus.OK, "Category deleted successfully");
+    }
+
+    @Override
+    public void updateCategory(Long categoryId, Category category) {
+        // this method updates an existing category
+        boolean exists = categories.stream()
+                // this checks if the category with the given ID exists
+                .anyMatch(existingCategory -> existingCategory.getCategoryId().equals(categoryId));
+        if (!exists) {
+            log.warn("Attempted to update non-existent category with ID: {}", categoryId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found with ID: " + categoryId);
+        }
+        // this updates the category if it exists
+        categories.stream()
+                // this finds the category with the given ID
+                .filter(existingCategory -> existingCategory.getCategoryId().equals(categoryId))
+                .findFirst()
+                .ifPresent(existingCategory -> {
+                    existingCategory.setCategoryName(category.getCategoryName());
+                    log.info("Category with ID {} updated successfully", categoryId);
+                });
+        throw new ResponseStatusException(HttpStatus.OK, "Category updated successfully");
     }
 
 }
