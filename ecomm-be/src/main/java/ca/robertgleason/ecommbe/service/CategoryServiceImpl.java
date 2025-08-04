@@ -20,6 +20,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void createCategory(Category category) {
+        Long newId = (long) (categories.size() + 1);
+
+        category.setCategoryId(newId);
         categories.add(category);
 
     }
