@@ -23,6 +23,9 @@ public class CategoryServiceImpl implements CategoryService {
         return categories;
     }
 
+
+    // this no longer used the long id it is updated from the entity now
+
     @Override
     public void createCategory(Category category) {
         // this method creates a new category and adds it to the list
