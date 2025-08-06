@@ -1,5 +1,6 @@
 package ca.robertgleason.ecommbe.excepetions;
 
+import ca.robertgleason.ecommbe.payload.APIResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -26,14 +27,20 @@ public class MyGlobalExceptionHandler {
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<String> myResourceNotFoundException(ResourceNotFoundException e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<APIResponse> myResourceNotFoundException(ResourceNotFoundException e) {
+        return new ResponseEntity<>(
+                new APIResponse(e.getMessage(), false),
+                HttpStatus.NOT_FOUND
+        );
 
     }
 
     @ExceptionHandler(APIException.class)
-    public ResponseEntity<String> myAPIException(APIException e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<APIResponse> myAPIException(APIException e) {
+        return new ResponseEntity<>(
+                new APIResponse(e.getMessage(), false),
+                HttpStatus.BAD_REQUEST
+        );
     }
 
 }
