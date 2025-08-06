@@ -27,7 +27,7 @@ public class CategoryServiceImpl implements CategoryService {
      * Logger for this service
      */
     private static final Logger log = LoggerFactory.getLogger(CategoryServiceImpl.class);
-//    private final List<Category> categories = new ArrayList<>();
+
 
     /**
      * Repository for database operations

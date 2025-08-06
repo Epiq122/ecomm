@@ -88,7 +88,7 @@ Represents product categories in the e-commerce system.
 Key attributes:
 
 - `categoryId`: Primary key using database auto-increment
-- `categoryName`: Name of the category (required)
+- `categoryName`: Name of the category (required, minimum 5 characters)
 
 ```java
 
@@ -102,154 +102,150 @@ public class Category {
     private Long categoryId;
 
     @NotBlank
+    @Size(min = 5, message = "Category name must be at least 5 characters long")
     private String categoryName;
 }
 ```
 
 ### Repositories
 
-Repositories handle data access operations.
+Repositories provide data access functionality using Spring Data JPA.
 
 #### CategoryRepository
 
 Located in: `ca/robertgleason/ecommbe/repository/CategoryRepository.java`
 
-Provides data access methods for Category entities. It extends the Spring Data JPA `JpaRepository` interface, which
-provides standard CRUD operations.
+Extends JpaRepository to provide CRUD operations for Category entities.
+
+Custom methods:
+
+- `findByCategoryName`: Finds a category by its name
 
 ### Services
 
-Services contain business logic and bridge controllers with repositories.
+Services contain the business logic of the application.
 
 #### CategoryService
 
 Located in: `ca/robertgleason/ecommbe/service/CategoryService.java`
 
-Service interface that defines operations for Category management:
+Interface defining operations for Category management:
 
-- `getAllCategories()`: Retrieves all categories
-- `createCategory(Category)`: Creates a new category
-- `deleteCategory(Long)`: Deletes a category by ID
-- `updateCategory(Long, Category)`: Updates an existing category
+- `getAllCategories()`: Retrieve all categories
+- `createCategory(Category)`: Create a new category
+- `deleteCategory(Long)`: Delete a category by ID
+- `updateCategory(Long, Category)`: Update an existing category
 
 #### CategoryServiceImpl
 
 Located in: `ca/robertgleason/ecommbe/service/CategoryServiceImpl.java`
 
-Implementation of the CategoryService interface. Contains business logic for category operations:
+Implementation of the CategoryService interface with the following features:
 
-- Error handling for non-existent categories
-- Logging of operations
-- Data validation
+- Validation of category existence before operations
+- Prevention of duplicate category names
+- Comprehensive error handling
+- Logging of operations and errors
+- Clean transaction management
 
 ### Controllers
 
-Controllers handle HTTP requests and responses.
+Controllers handle HTTP requests and delegate to services for business logic.
 
 #### CategoryController
 
 Located in: `ca/robertgleason/ecommbe/controller/CategoryController.java`
 
-Provides RESTful endpoints for Category operations:
+Provides REST endpoints for Category management:
 
-- `GET /api/public/categories`: List all categories
+- `GET /api/public/categories`: Retrieve all categories
 - `POST /api/public/categories`: Create a new category
-- `DELETE /api/admin/categories/{id}`: Delete a category (admin only)
-- `PUT /api/public/categories/{id}`: Update a category
+- `DELETE /api/admin/categories/{categoryId}`: Delete a category (admin only)
+- `PUT /api/public/categories/{categoryId}`: Update an existing category
+
+Note the separation between public and admin endpoints for security purposes.
 
 ### Exception Handling
+
+The application implements a global exception handling strategy to provide consistent error responses.
+
+#### ResourceNotFoundException
+
+Located in: `ca/robertgleason/ecommbe/excepetions/ResourceNotFoundException.java`
+
+Custom exception for when a requested resource cannot be found, providing details about the resource type, field, and
+value.
+
+#### APIException
+
+Located in: `ca/robertgleason/ecommbe/excepetions/APIException.java`
+
+General purpose exception for API-related errors such as validation failures or business rule violations.
 
 #### MyGlobalExceptionHandler
 
 Located in: `ca/robertgleason/ecommbe/excepetions/MyGlobalExceptionHandler.java`
 
-Centralizes exception handling for the application:
-
-- Handles validation exceptions
-- Returns appropriate HTTP status codes
-- Provides clear error messages to clients
+Global exception handler that catches exceptions and returns appropriate HTTP responses with meaningful error messages.
 
 ## API Endpoints
 
-### Category API
+### Category Management
 
-| Method | Endpoint                    | Description         | Access Level |
-|--------|-----------------------------|---------------------|--------------|
-| GET    | /api/public/categories      | List all categories | Public       |
-| POST   | /api/public/categories      | Create a category   | Public       |
-| PUT    | /api/public/categories/{id} | Update a category   | Public       |
-| DELETE | /api/admin/categories/{id}  | Delete a category   | Admin        |
+| Method | Endpoint                            | Description                 | Access |
+|--------|-------------------------------------|-----------------------------|--------|
+| GET    | /api/public/categories              | Get all categories          | Public |
+| POST   | /api/public/categories              | Create a new category       | Public |
+| PUT    | /api/public/categories/{categoryId} | Update an existing category | Public |
+| DELETE | /api/admin/categories/{categoryId}  | Delete a category           | Admin  |
 
 ## Database
 
-The application is configured to use an in-memory database by default (H2). This can be changed by updating the
-`application.properties` file to connect to a different database.
+The application uses JPA/Hibernate for ORM, which allows for easy switching between different database providers.
 
-### Sample Database Configuration (PostgreSQL)
+### Entity Relationships
 
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/ecommerce
-spring.datasource.username=postgres
-spring.datasource.password=password
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-spring.jpa.hibernate.ddl-auto=update
-```
+Currently implemented:
+
+- Category (standalone entity)
+
+Future implementations will include additional entities and their relationships.
 
 ## Authentication and Authorization
 
-Currently, the application distinguishes between public and admin endpoints but does not implement actual
-authentication. Future versions will integrate Spring Security.
+The API has endpoints with different access levels:
 
-Planned security features:
+- Public endpoints: Accessible to all users
+- Admin endpoints: Restricted to administrators
 
-- JWT-based authentication
-- Role-based access control
-- Password hashing
-- CSRF protection
+*Note: Authentication and authorization mechanisms are not yet implemented but are planned for future development.*
 
 ## Common Patterns and Best Practices
 
-### Service Layer Pattern
+The project follows several best practices:
 
-- Define interfaces for all services
-- Implement business logic in service implementations
-- Use constructor injection for dependencies
-- Handle exceptions appropriately
-
-### Controller Design
-
-- Keep controllers thin (no business logic)
-- Use appropriate HTTP methods
-- Return proper HTTP status codes
-- Validate input data
-
-### Exception Handling
-
-- Centralize exception handling with @RestControllerAdvice
-- Use appropriate exception types
-- Provide meaningful error messages
+1. **Layered Architecture**: Clear separation between controllers, services, and repositories
+2. **Interface-based Design**: Services are defined by interfaces, allowing for multiple implementations
+3. **Dependency Injection**: Using Spring's DI for loose coupling between components
+4. **Exception Handling**: Global exception handling with custom exceptions
+5. **Validation**: Using Jakarta Validation for entity validation
+6. **Logging**: Comprehensive logging using SLF4J
+7. **Resource Naming**: Consistent REST resource naming conventions
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Database connection issues**
-    - Check database credentials in application.properties
-    - Ensure database server is running
-
-2. **Validation errors**
-    - Ensure request data meets validation requirements
-    - Check error response for specific field errors
-
-3. **404 Not Found errors**
-    - Verify URL paths
-    - Check if IDs exist in the database
+- **404 Not Found**: Check the endpoint URL and HTTP method
+- **400 Bad Request**: Validate request payload against entity requirements
+- **500 Internal Server Error**: Check server logs for detailed error information
 
 ## Change Log
 
-### Version 0.1.0 (Initial Version) - August 5, 2023
+### Version 0.1.0 (Current)
 
-- Basic project structure
-- Category management (CRUD operations)
-- Global exception handling
-- API documentation
+- Initial project setup
+- Implemented Category management (CRUD operations)
+- Added global exception handling
+- Implemented validation for entity fields
+- Added basic API documentation
