@@ -12,29 +12,37 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+/**
+ * Implementation of the CategoryService interface.
+ * <p>
+ * Implementation practices:
+ * - Exception handling with meaningful messages
+ * - Logging for operations and errors
+ * - Input validation
+ */
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
+    /**
+     * Logger for this service
+     */
     private static final Logger log = LoggerFactory.getLogger(CategoryServiceImpl.class);
 //    private final List<Category> categories = new ArrayList<>();
 
-
+    /**
+     * Repository for database operations
+     */
     @Autowired
     private CategoryRepository categoryRepository;
-
 
     @Override
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
 
-
-    // this no longer used the long id it is updated from the entity now
-
     @Override
     public Category createCategory(Category category) {
         return categoryRepository.save(category);
-
     }
 
     @Override
