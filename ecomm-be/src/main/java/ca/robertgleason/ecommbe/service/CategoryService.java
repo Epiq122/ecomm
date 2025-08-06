@@ -1,41 +1,16 @@
 package ca.robertgleason.ecommbe.service;
 
-import ca.robertgleason.ecommbe.model.Category;
+import ca.robertgleason.ecommbe.payload.CategoryDTO;
+import ca.robertgleason.ecommbe.payload.CategoryResponse;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
-/**
- * Service interface for Category operations.
- * <p>
- * Benefits of service interfaces:
- * - Loose coupling
- * - Easier testing with mocks
- * - Clear contract definition
- */
 @Service
 public interface CategoryService {
-    /**
-     * Get all categories
-     */
-    List<Category> getAllCategories();
+    CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-    /**
-     * Create a new category
-     */
-    Category createCategory(Category category);
+    CategoryDTO createCategory(CategoryDTO categoryDTO);
 
-    /**
-     * Delete a category by ID
-     *
-     * @throws org.springframework.web.server.ResponseStatusException if not found
-     */
-    String deleteCategory(Long categoryId);
+    CategoryDTO deleteCategory(Long categoryId);
 
-    /**
-     * Update an existing category
-     *
-     * @throws org.springframework.web.server.ResponseStatusException if not found
-     */
-    Category updateCategory(Long categoryId, Category category);
+    CategoryDTO updateCategory(Long categoryId, CategoryDTO categoryDTO);
 }

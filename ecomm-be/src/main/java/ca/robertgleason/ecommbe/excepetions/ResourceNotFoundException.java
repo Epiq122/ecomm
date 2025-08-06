@@ -1,6 +1,5 @@
 package ca.robertgleason.ecommbe.excepetions;
 
-
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor

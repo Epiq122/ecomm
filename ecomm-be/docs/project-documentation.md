@@ -107,6 +107,32 @@ public class Category {
 }
 ```
 
+### Data Transfer Objects (DTOs)
+
+DTOs are used to transfer data between layers of the application, particularly between the service layer and the
+controller layer.
+
+#### CategoryDTO
+
+Located in: `ca/robertgleason/ecommbe/payload/CategoryDTO.java`
+
+Used for transferring category data to and from the client.
+
+Key attributes:
+
+- `id`: Category identifier
+- `name`: Category name
+
+#### CategoryResponse
+
+Located in: `ca/robertgleason/ecommbe/payload/CategoryResponse.java`
+
+Used for wrapping a list of CategoryDTO objects when returning multiple categories.
+
+Key attributes:
+
+- `content`: List of CategoryDTO objects
+
 ### Repositories
 
 Repositories provide data access functionality using Spring Data JPA.
@@ -244,6 +270,16 @@ The project follows several best practices:
 
 This section tracks all significant changes to the project using [Semantic Versioning](https://semver.org/) (
 MAJOR.MINOR.PATCH).
+
+### Version 0.2.0 (August 5, 2025)
+
+- Added Data Transfer Object (DTO) pattern for Category entity
+- Implemented ModelMapper for entity-DTO conversion
+- Implemented pagination for category listings
+- Added sorting capabilities for category results
+- Enhanced responses with appropriate HTTP status codes
+- Removed code comments for cleaner codebase
+- Updated project documentation with DTO information
 
 ### Version 0.1.0 (August 5, 2025)
 
