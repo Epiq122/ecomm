@@ -1,5 +1,6 @@
 package ca.robertgleason.ecommbe.controller;
 
+import ca.robertgleason.ecommbe.config.AppConstants;
 import ca.robertgleason.ecommbe.payload.CategoryDTO;
 import ca.robertgleason.ecommbe.payload.CategoryResponse;
 import ca.robertgleason.ecommbe.service.CategoryService;
@@ -20,8 +21,8 @@ public class CategoryController {
 
     @GetMapping("/public/categories")
     public ResponseEntity<CategoryResponse> getAllCategories(
-            @RequestParam(value = "pageNumber") Integer pageNumber,
-            @RequestParam(value = "pageSize") Integer pageSize) {
+            @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize) {
         CategoryResponse categoryResponse = categoryService.getAllCategories(pageNumber, pageSize);
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
