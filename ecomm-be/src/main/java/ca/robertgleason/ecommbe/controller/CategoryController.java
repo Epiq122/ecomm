@@ -1,6 +1,5 @@
 package ca.robertgleason.ecommbe.controller;
 
-import ca.robertgleason.ecommbe.model.Category;
 import ca.robertgleason.ecommbe.payload.CategoryDTO;
 import ca.robertgleason.ecommbe.payload.CategoryResponse;
 import ca.robertgleason.ecommbe.service.CategoryService;
@@ -63,8 +62,8 @@ public class CategoryController {
      * Update existing category
      */
     @PutMapping("/public/categories/{categoryId}")
-    public ResponseEntity<String> updateCategory(@Valid @PathVariable Long categoryId, @RequestBody Category category) {
-        Category updatedCategory = categoryService.updateCategory(categoryId, category);
-        return new ResponseEntity<>("Category updated successfully: " + updatedCategory.getCategoryName(), HttpStatus.OK);
+    public ResponseEntity<CategoryDTO> updateCategory(@Valid @PathVariable Long categoryId, @RequestBody CategoryDTO categoryDTO) {
+        CategoryDTO updatedCategory = categoryService.updateCategory(categoryId, categoryDTO);
+        return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
     }
 }

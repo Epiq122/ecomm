@@ -1,6 +1,5 @@
 package ca.robertgleason.ecommbe.service;
 
-import ca.robertgleason.ecommbe.model.Category;
 import ca.robertgleason.ecommbe.payload.CategoryDTO;
 import ca.robertgleason.ecommbe.payload.CategoryResponse;
 import org.springframework.stereotype.Service;
@@ -37,5 +36,5 @@ public interface CategoryService {
      *
      * @throws org.springframework.web.server.ResponseStatusException if not found
      */
-    Category updateCategory(Long categoryId, Category category);
+    CategoryDTO updateCategory(Long categoryId, CategoryDTO categoryDTO);
 }
