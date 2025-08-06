@@ -4,37 +4,13 @@ import ca.robertgleason.ecommbe.payload.CategoryDTO;
 import ca.robertgleason.ecommbe.payload.CategoryResponse;
 import org.springframework.stereotype.Service;
 
-/**
- * Service interface for Category operations.
- * <p>
- * Benefits of service interfaces:
- * - Loose coupling
- * - Easier testing with mocks
- * - Clear contract definition
- */
 @Service
 public interface CategoryService {
-    /**
-     * Get all categories
-     */
     CategoryResponse getAllCategories();
 
-    /**
-     * Create a new category
-     */
     CategoryDTO createCategory(CategoryDTO categoryDTO);
 
-    /**
-     * Delete a category by ID
-     *
-     * @throws org.springframework.web.server.ResponseStatusException if not found
-     */
-    String deleteCategory(Long categoryId);
+    CategoryDTO deleteCategory(Long categoryId);
 
-    /**
-     * Update an existing category
-     *
-     * @throws org.springframework.web.server.ResponseStatusException if not found
-     */
     CategoryDTO updateCategory(Long categoryId, CategoryDTO categoryDTO);
 }

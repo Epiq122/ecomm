@@ -15,29 +15,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * Implementation of the CategoryService interface.
- * <p>
- * Implementation practices:
- * - Exception handling with meaningful messages
- * - Logging for operations and errors
- * - Input validation
- */
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
-    /**
-     * Logger for this service
-     */
     private static final Logger log = LoggerFactory.getLogger(CategoryServiceImpl.class);
 
-
-    /**
-     * Repository for database operations
-     */
     @Autowired
     private CategoryRepository categoryRepository;
-
 
     @Autowired
     private ModelMapper modelMapper;
@@ -67,14 +51,14 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public String deleteCategory(Long categoryId) {
+    public CategoryDTO deleteCategory(Long categoryId) {
         if (!categoryRepository.existsById(categoryId)) {
             log.warn("Attempted to delete non-existent category with ID: {}", categoryId);
             throw new ResourceNotFoundException("Category", "ID", categoryId);
         }
         categoryRepository.deleteById(categoryId);
         log.info("Category with ID {} deleted successfully", categoryId);
-        return "Category with ID " + categoryId + " deleted successfully";
+        return new CategoryDTO(categoryId, "Category deleted successfully");
     }
 
     @Override
