@@ -28,23 +28,9 @@
 - Use constructor injection rather than field injection
 - Return ResponseEntity for fine-grained control over HTTP responses
 - Implement proper error handling with try-catch blocks
-
-## Service Layer
-- Define interfaces for all services to enable loose coupling
-- Keep business logic in services, not in controllers
-- Use meaningful method names that describe the business operation
-- Consider using DTOs to separate domain models from API representations
-- Implement proper transaction management
 - Define clear contracts in service interfaces
 - Avoid calling repositories directly from controllers
 - Use @Transactional annotations at the service layer
-
-## Service Implementation
-- Use proper exception handling with meaningful messages
-- Implement logging for important operations and errors
-- Consider using @Transactional for methods that modify data
-- Validate input data before processing
-- Return meaningful responses that the controller can use
 - Use constructor injection for dependencies when possible
 - Implement business logic validation
 - Consider using mapper libraries (MapStruct, ModelMapper) for entity-to-DTO conversions
@@ -56,22 +42,8 @@
 - Consider using specifications or query DSL for dynamic queries
 - Use pagination and sorting capabilities provided by Spring Data
 - Consider adding custom methods for specialized data access needs
-
-## Exception Handling
-- Centralize exception handling using @RestControllerAdvice
-- Create specific handlers for different exception types
-- Return appropriate HTTP status codes with error messages
-- Consider using a standardized error response format
-- Log exceptions with appropriate level (ERROR for unexpected, WARN for expected)
-- Avoid exposing sensitive information in error responses
 - Create custom exceptions for specific business scenarios
 - Consider using @ExceptionHandler for specific exception types
-
-## Logging Best Practices
-- ERROR: For errors that need immediate attention
-- WARN: For potential issues that don't prevent operation
-- INFO: For important business events
-- DEBUG: For detailed troubleshooting information
 - Use parameterized logging to avoid string concatenation
 - Include contextual information in log messages
 - Configure appropriate log levels for different environments
@@ -86,14 +58,6 @@
 - Use comments sparingly, focus on "why" not "what"
 - Organize imports and remove unused ones
 - Follow a consistent code style
-
-## Security Considerations
-- Implement proper authentication and authorization
-- Use different URL patterns for public vs. admin endpoints
-- Validate all user input
-- Use HTTPS in production
-- Consider implementing CSRF protection
-- Handle sensitive data appropriately
 - Implement proper password hashing
 - Use Spring Security for authentication and authorization
 - Consider JWT for stateless API authentication
@@ -118,6 +82,45 @@
 - Implement appropriate fetch strategies
 - Consider asynchronous processing for long-running tasks
 - Monitor and optimize memory usage
+- Implement health checks and monitoring
+- Consider implementing API rate limiting
+- Plan for scalability with microservices architecture if needed
+- Implement proper database migration strategy
+## Service Layer
+- Define interfaces for all services to enable loose coupling
+- Keep business logic in services, not in controllers
+- Use meaningful method names that describe the business operation
+- Consider using DTOs to separate domain models from API representations
+- Implement proper transaction management
+
+## Service Implementation
+- Use proper exception handling with meaningful messages
+- Implement logging for important operations and errors
+- Consider using @Transactional for methods that modify data
+- Validate input data before processing
+- Return meaningful responses that the controller can use
+
+## Exception Handling
+- Centralize exception handling using @RestControllerAdvice
+- Create specific handlers for different exception types
+- Return appropriate HTTP status codes with error messages
+- Consider using a standardized error response format
+- Log exceptions with appropriate level (ERROR for unexpected, WARN for expected)
+- Avoid exposing sensitive information in error responses
+
+## Logging Best Practices
+- ERROR: For errors that need immediate attention
+- WARN: For potential issues that don't prevent operation
+- INFO: For important business events
+- DEBUG: For detailed troubleshooting information
+
+## Security Considerations
+- Implement proper authentication and authorization
+- Use different URL patterns for public vs. admin endpoints
+- Validate all user input
+- Use HTTPS in production
+- Consider implementing CSRF protection
+- Handle sensitive data appropriately
 
 ## For Future Projects
 - Consider implementing RESTful API pagination
@@ -126,7 +129,3 @@
 - Set up CI/CD pipelines
 - Add comprehensive test coverage (unit, integration, e2e)
 - Consider containerization (Docker) for consistent deployment
-- Implement health checks and monitoring
-- Consider implementing API rate limiting
-- Plan for scalability with microservices architecture if needed
-- Implement proper database migration strategy

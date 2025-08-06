@@ -1,6 +1,7 @@
 package ca.robertgleason.ecommbe.service;
 
 
+import ca.robertgleason.ecommbe.excepetions.APIException;
 import ca.robertgleason.ecommbe.excepetions.ResourceNotFoundException;
 import ca.robertgleason.ecommbe.model.Category;
 import ca.robertgleason.ecommbe.repository.CategoryRepository;
@@ -36,11 +37,20 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> getAllCategories() {
+        if (categoryRepository.count() == 0) {
+            log.info("No categories found in the database");
+            throw new APIException("No categories found in the database");
+        }
         return categoryRepository.findAll();
     }
 
     @Override
     public Category createCategory(Category category) {
+        Category savedCategory = categoryRepository.findByCategoryName(category.getCategoryName());
+        if (savedCategory != null) {
+            log.warn("Category with name '{}' already exists", category.getCategoryName());
+            throw new APIException("Category with name '" + category.getCategoryName() + "' already exists");
+        }
         return categoryRepository.save(category);
     }
 
