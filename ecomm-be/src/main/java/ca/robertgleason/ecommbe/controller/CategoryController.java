@@ -1,6 +1,7 @@
 package ca.robertgleason.ecommbe.controller;
 
 import ca.robertgleason.ecommbe.model.Category;
+import ca.robertgleason.ecommbe.payload.CategoryDTO;
 import ca.robertgleason.ecommbe.payload.CategoryResponse;
 import ca.robertgleason.ecommbe.service.CategoryService;
 import jakarta.validation.Valid;
@@ -43,9 +44,9 @@ public class CategoryController {
      * Create a new category with validation
      */
     @PostMapping("/public/categories")
-    public ResponseEntity<String> createCategory(@Valid @RequestBody Category category) {
-        categoryService.createCategory(category);
-        return new ResponseEntity<>("Category created successfully", HttpStatus.CREATED);
+    public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
+        CategoryDTO createdCategory = categoryService.createCategory(categoryDTO);
+        return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
     }
 
     /**

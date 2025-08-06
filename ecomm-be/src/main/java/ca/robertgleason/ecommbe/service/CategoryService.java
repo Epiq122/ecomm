@@ -1,6 +1,7 @@
 package ca.robertgleason.ecommbe.service;
 
 import ca.robertgleason.ecommbe.model.Category;
+import ca.robertgleason.ecommbe.payload.CategoryDTO;
 import ca.robertgleason.ecommbe.payload.CategoryResponse;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public interface CategoryService {
     /**
      * Create a new category
      */
-    Category createCategory(Category category);
+    CategoryDTO createCategory(CategoryDTO categoryDTO);
 
     /**
      * Delete a category by ID
