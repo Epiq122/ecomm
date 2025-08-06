@@ -242,10 +242,30 @@ The project follows several best practices:
 
 ## Change Log
 
-### Version 0.1.0 (Current)
+This section tracks all significant changes to the project using [Semantic Versioning](https://semver.org/) (
+MAJOR.MINOR.PATCH).
+
+### Version 0.1.0 (August 5, 2025)
 
 - Initial project setup
 - Implemented Category management (CRUD operations)
 - Added global exception handling
 - Implemented validation for entity fields
 - Added basic API documentation
+
+### Version History Format
+
+Entries in the change log follow this format:
+
+- **MAJOR version**: Incompatible API changes
+- **MINOR version**: Added functionality in a backward compatible manner
+- **PATCH version**: Backward compatible bug fixes
+
+Each version entry includes:
+
+- Version number and release date
+- List of added features
+- List of changed features
+- List of deprecated features
+- List of removed features
+- List of fixed issues
