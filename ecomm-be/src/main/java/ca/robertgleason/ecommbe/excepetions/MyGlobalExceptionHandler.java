@@ -30,11 +30,11 @@ public class MyGlobalExceptionHandler {
         Map<String, String> response = new HashMap<>();
         e.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
-            // you can customize the error message if needed
+
             String errorMessage = error.getDefaultMessage();
             response.put(fieldName, errorMessage);
         });
-        return new ResponseEntity<Map<String, String>>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)

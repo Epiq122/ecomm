@@ -1,9 +1,8 @@
 package ca.robertgleason.ecommbe.service;
 
 import ca.robertgleason.ecommbe.model.Category;
+import ca.robertgleason.ecommbe.payload.CategoryResponse;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * Service interface for Category operations.
@@ -18,7 +17,7 @@ public interface CategoryService {
     /**
      * Get all categories
      */
-    List<Category> getAllCategories();
+    CategoryResponse getAllCategories();
 
     /**
      * Create a new category

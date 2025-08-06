@@ -4,13 +4,12 @@ package ca.robertgleason.ecommbe.service;
 import ca.robertgleason.ecommbe.excepetions.APIException;
 import ca.robertgleason.ecommbe.excepetions.ResourceNotFoundException;
 import ca.robertgleason.ecommbe.model.Category;
+import ca.robertgleason.ecommbe.payload.CategoryResponse;
 import ca.robertgleason.ecommbe.repository.CategoryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * Implementation of the CategoryService interface.
@@ -36,7 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository categoryRepository;
 
     @Override
-    public List<Category> getAllCategories() {
+    public CategoryResponse getAllCategories() {
         if (categoryRepository.count() == 0) {
             log.info("No categories found in the database");
             throw new APIException("No categories found in the database");
