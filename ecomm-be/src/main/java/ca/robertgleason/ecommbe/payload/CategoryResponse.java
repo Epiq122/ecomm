@@ -12,5 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 public class CategoryResponse {
 
-    private List<CategoryDto> categories;
+    private List<CategoryDTO> categories;
+    
 }

@@ -1,13 +1,12 @@
 package ca.robertgleason.ecommbe.controller;
 
 import ca.robertgleason.ecommbe.model.Category;
+import ca.robertgleason.ecommbe.payload.CategoryResponse;
 import ca.robertgleason.ecommbe.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * REST Controller for handling Category-related HTTP requests.
@@ -34,8 +33,10 @@ public class CategoryController {
      * Get all categories
      */
     @GetMapping("/public/categories")
-    public List<Category> getAllCategories() {
-        return new ResponseEntity<>(categoryService.getAllCategories(), HttpStatus.OK).getBody();
+    public ResponseEntity<CategoryResponse> getAllCategories() {
+        CategoryResponse categoryResponse = categoryService.getAllCategories();
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
+
     }
 
     /**

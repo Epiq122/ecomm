@@ -4,12 +4,16 @@ package ca.robertgleason.ecommbe.service;
 import ca.robertgleason.ecommbe.excepetions.APIException;
 import ca.robertgleason.ecommbe.excepetions.ResourceNotFoundException;
 import ca.robertgleason.ecommbe.model.Category;
+import ca.robertgleason.ecommbe.payload.CategoryDTO;
 import ca.robertgleason.ecommbe.payload.CategoryResponse;
 import ca.robertgleason.ecommbe.repository.CategoryRepository;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Implementation of the CategoryService interface.
@@ -34,13 +38,20 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Override
     public CategoryResponse getAllCategories() {
-        if (categoryRepository.count() == 0) {
-            log.info("No categories found in the database");
-            throw new APIException("No categories found in the database");
+        List<Category> categories = categoryRepository.findAll();
+        if (categories.isEmpty()) {
+            throw new APIException("No categories found");
         }
-        return categoryRepository.findAll();
+        List<CategoryDTO> categoryDTOs = categories.stream()
+                .map(category -> modelMapper.map(category, CategoryDTO.class))
+                .toList();
+        return new CategoryResponse(categoryDTOs);
     }
 
     @Override
