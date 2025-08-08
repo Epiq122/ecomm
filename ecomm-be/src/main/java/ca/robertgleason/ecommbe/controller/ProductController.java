@@ -3,6 +3,7 @@ package ca.robertgleason.ecommbe.controller;
 
 import ca.robertgleason.ecommbe.model.Product;
 import ca.robertgleason.ecommbe.payload.ProductDTO;
+import ca.robertgleason.ecommbe.payload.ProductResponse;
 import ca.robertgleason.ecommbe.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,13 @@ public class ProductController {
     public ResponseEntity<ProductDTO> addProduct(@RequestBody Product product, @PathVariable Long categoryId) {
         ProductDTO productDTO = productService.addProduct(product, categoryId);
         return new ResponseEntity<>(productDTO, HttpStatus.CREATED);
+    }
+
+
+    @GetMapping("/public/products")
+    public ResponseEntity<ProductResponse> getAllProducts() {
+        ProductResponse productResponse = productService.getAllProducts();
+        return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
 }
