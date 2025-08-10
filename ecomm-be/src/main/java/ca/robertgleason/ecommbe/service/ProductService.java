@@ -1,7 +1,6 @@
 package ca.robertgleason.ecommbe.service;
 
 
-import ca.robertgleason.ecommbe.model.Product;
 import ca.robertgleason.ecommbe.payload.ProductDTO;
 import ca.robertgleason.ecommbe.payload.ProductResponse;
 import org.springframework.stereotype.Service;
@@ -11,17 +10,18 @@ import java.io.IOException;
 
 @Service
 public interface ProductService {
-    ProductDTO addProduct(Product product, Long categoryId);
+    ProductDTO addProduct(Long categoryId, ProductDTO product);
 
-    ProductResponse getAllProducts();
 
-    ProductResponse searchByCategory(Long categoryId);
+    ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-    ProductResponse searchProductsByKeyword(String keyword);
+    ProductResponse searchByCategory(Long categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-    ProductDTO updateProduct(Long productId, ProductDTO productDTO);
+    ProductResponse searchProductByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-    ProductDTO deleteProduct(Long productID);
+    ProductDTO updateProduct(Long productId, ProductDTO product);
+
+    ProductDTO deleteProduct(Long productId);
 
     ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException;
 }
