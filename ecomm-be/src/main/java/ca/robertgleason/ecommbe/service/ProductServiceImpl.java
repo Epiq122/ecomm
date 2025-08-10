@@ -1,6 +1,7 @@
 package ca.robertgleason.ecommbe.service;
 
 
+import ca.robertgleason.ecommbe.excepetions.APIException;
 import ca.robertgleason.ecommbe.excepetions.ResourceNotFoundException;
 import ca.robertgleason.ecommbe.model.Category;
 import ca.robertgleason.ecommbe.model.Product;
@@ -9,6 +10,7 @@ import ca.robertgleason.ecommbe.payload.ProductResponse;
 import ca.robertgleason.ecommbe.repository.CategoryRepository;
 import ca.robertgleason.ecommbe.repository.ProductRepository;
 import ca.robertgleason.ecommbe.utilties.MappingUtils;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,9 +41,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO addProduct(Product product, Long categoryId) {
+    public ProductDTO addProduct(@Valid Product product, Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
+        Product existingProduct = productRepository.findByProductName(product.getProductName());
+        if (existingProduct != null) {
+            throw new APIException("Product with name " + product.getProductName() + " already exists.");
+        }
+
         product.setImage("default.png");
         product.setCategory(category);
         double specialPrice = product.getPrice() - (product.getDiscount() * 0.01) * product.getPrice();
@@ -52,6 +59,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse getAllProducts() {
+        if (productRepository.count() == 0) {
+            throw new APIException("No products found");
+        }
         List<Product> products = productRepository.findAll();
         List<ProductDTO> productDTOS = mappingUtils.mapList(products, ProductDTO.class);
 
@@ -75,8 +85,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse searchProductsByKeyword(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            throw new APIException("Keyword cannot be null or empty");
+
+        }
+
         List<Product> products = productRepository.findByProductNameLikeIgnoreCase('%' + keyword + '%');
         if (products.isEmpty()) {
+            throw new ResourceNotFoundException("Product", "keyword", keyword);
+        }
+        boolean keywordExists = productRepository.existsByProductNameContainingIgnoreCase(keyword);
+        if (!keywordExists) {
             throw new ResourceNotFoundException("Product", "keyword", keyword);
         }
         List<ProductDTO> productDTOS = mappingUtils.mapList(products, ProductDTO.class);
@@ -106,6 +125,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO deleteProduct(Long productId) {
+        if (!productRepository.existsById(productId)) {
+            throw new ResourceNotFoundException("Product", "id", productId);
+        }
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
         productRepository.delete(product);
