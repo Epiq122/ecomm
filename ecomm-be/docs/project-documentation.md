@@ -43,6 +43,9 @@ src/
       model/                        # Entity definitions
       repository/                   # Data access interfaces
       service/                      # Business logic interfaces and implementations
+      payload/                      # Data Transfer Objects
+      config/                       # Application configuration
+      utilties/                     # Utility classes
     resources/
       application.properties        # Application configuration
 ```
@@ -56,6 +59,7 @@ src/
 - **Jakarta Validation**: Data validation
 - **Lombok**: Reduces boilerplate code
 - **SLF4J**: Logging framework
+- **ModelMapper**: Object mapping between DTOs and entities
 
 ## Setup and Installation
 
@@ -107,6 +111,22 @@ public class Category {
 }
 ```
 
+#### Product
+
+Located in: `ca/robertgleason/ecommbe/model/Product.java`
+
+Represents products in the e-commerce system.
+
+Key attributes:
+
+- `productId`: Primary key using database auto-increment
+- `name`: Product name
+- `description`: Product description
+- `price`: Product price
+- `isActive`: Product availability status
+- `imageUrl`: URL to product image
+- `category`: Reference to the product's category
+
 ### Data Transfer Objects (DTOs)
 
 DTOs are used to transfer data between layers of the application, particularly between the service layer and the
@@ -132,6 +152,42 @@ Used for wrapping a list of CategoryDTO objects when returning multiple categori
 Key attributes:
 
 - `content`: List of CategoryDTO objects
+- `pageNumber`: Current page number
+- `pageSize`: Number of items per page
+- `totalElements`: Total number of items
+- `totalPages`: Total number of pages
+- `lastPage`: Whether this is the last page
+
+#### ProductDTO
+
+Located in: `ca/robertgleason/ecommbe/payload/ProductDTO.java`
+
+Used for transferring product data to and from the client.
+
+Key attributes:
+
+- `id`: Product identifier
+- `name`: Product name
+- `description`: Product description
+- `price`: Product price
+- `isActive`: Product availability status
+- `imageUrl`: URL to product image
+- `categoryId`: ID of the product's category
+
+#### ProductResponse
+
+Located in: `ca/robertgleason/ecommbe/payload/ProductResponse.java`
+
+Used for wrapping a list of ProductDTO objects when returning multiple products.
+
+Key attributes:
+
+- `content`: List of ProductDTO objects
+- `pageNumber`: Current page number
+- `pageSize`: Number of items per page
+- `totalElements`: Total number of items
+- `totalPages`: Total number of pages
+- `lastPage`: Whether this is the last page
 
 ### Repositories
 
@@ -147,6 +203,16 @@ Custom methods:
 
 - `findByCategoryName`: Finds a category by its name
 
+#### ProductRepository
+
+Located in: `ca/robertgleason/ecommbe/repository/ProductRepository.java`
+
+Extends JpaRepository to provide CRUD operations for Product entities.
+
+Custom methods:
+
+- `findByCategory_CategoryId`: Finds products by their category ID
+
 ### Services
 
 Services contain the business logic of the application.
@@ -157,10 +223,11 @@ Located in: `ca/robertgleason/ecommbe/service/CategoryService.java`
 
 Interface defining operations for Category management:
 
-- `getAllCategories()`: Retrieve all categories
-- `createCategory(Category)`: Create a new category
+- `getAllCategories(Integer, Integer, String, String)`: Retrieve all categories with pagination
+- `createCategory(CategoryDTO)`: Create a new category
 - `deleteCategory(Long)`: Delete a category by ID
-- `updateCategory(Long, Category)`: Update an existing category
+- `updateCategory(Long, CategoryDTO)`: Update an existing category
+- `getCategoryById(Long)`: Get a category by ID
 
 #### CategoryServiceImpl
 
@@ -173,6 +240,41 @@ Implementation of the CategoryService interface with the following features:
 - Comprehensive error handling
 - Logging of operations and errors
 - Clean transaction management
+- Pagination and sorting support
+
+#### ProductService
+
+Located in: `ca/robertgleason/ecommbe/service/ProductService.java`
+
+Interface defining operations for Product management:
+
+- `getAllProducts(Integer, Integer, String, String)`: Retrieve all products with pagination
+- `getProductsByCategory(Long, Integer, Integer, String, String)`: Retrieve products by category with pagination
+- `createProduct(ProductDTO)`: Create a new product
+- `deleteProduct(Long)`: Delete a product by ID
+- `updateProduct(Long, ProductDTO)`: Update an existing product
+- `getProductById(Long)`: Get a product by ID
+
+#### ProductServiceImpl
+
+Located in: `ca/robertgleason/ecommbe/service/ProductServiceImpl.java`
+
+Implementation of the ProductService interface with similar features to CategoryServiceImpl.
+
+#### FileService
+
+Located in: `ca/robertgleason/ecommbe/service/FileService.java`
+
+Interface for file operations:
+
+- `uploadImage(String, MultipartFile)`: Upload an image file
+- `getResource(String, String)`: Retrieve a file resource
+
+#### FileServiceImpl
+
+Located in: `ca/robertgleason/ecommbe/service/FileServiceImpl.java`
+
+Implementation of the FileService interface for handling file uploads and retrievals.
 
 ### Controllers
 
@@ -184,12 +286,28 @@ Located in: `ca/robertgleason/ecommbe/controller/CategoryController.java`
 
 Provides REST endpoints for Category management:
 
-- `GET /api/public/categories`: Retrieve all categories
+- `GET /api/public/categories`: Retrieve all categories with pagination
 - `POST /api/public/categories`: Create a new category
 - `DELETE /api/admin/categories/{categoryId}`: Delete a category (admin only)
 - `PUT /api/public/categories/{categoryId}`: Update an existing category
+- `GET /api/public/categories/{categoryId}`: Get a category by ID
 
 Note the separation between public and admin endpoints for security purposes.
+
+#### ProductController
+
+Located in: `ca/robertgleason/ecommbe/controller/ProductController.java`
+
+Provides REST endpoints for Product management:
+
+- `GET /api/public/products`: Retrieve all products with pagination
+- `GET /api/public/products/category/{categoryId}`: Get products by category with pagination
+- `POST /api/public/products`: Create a new product
+- `DELETE /api/admin/products/{productId}`: Delete a product (admin only)
+- `PUT /api/public/products/{productId}`: Update an existing product
+- `GET /api/public/products/{productId}`: Get a product by ID
+- `POST /api/public/products/image/{productId}`: Upload product image
+- `GET /api/public/products/image/{productId}`: Get product image
 
 ### Exception Handling
 
@@ -218,12 +336,26 @@ Global exception handler that catches exceptions and returns appropriate HTTP re
 
 ### Category Management
 
-| Method | Endpoint                            | Description                 | Access |
-|--------|-------------------------------------|-----------------------------|--------|
-| GET    | /api/public/categories              | Get all categories          | Public |
-| POST   | /api/public/categories              | Create a new category       | Public |
-| PUT    | /api/public/categories/{categoryId} | Update an existing category | Public |
-| DELETE | /api/admin/categories/{categoryId}  | Delete a category           | Admin  |
+| Method | Endpoint                            | Description                        | Access |
+|--------|-------------------------------------|------------------------------------|--------|
+| GET    | /api/public/categories              | Get all categories with pagination | Public |
+| GET    | /api/public/categories/{categoryId} | Get a category by ID               | Public |
+| POST   | /api/public/categories              | Create a new category              | Public |
+| PUT    | /api/public/categories/{categoryId} | Update an existing category        | Public |
+| DELETE | /api/admin/categories/{categoryId}  | Delete a category                  | Admin  |
+
+### Product Management
+
+| Method | Endpoint                                   | Description                              | Access |
+|--------|--------------------------------------------|------------------------------------------|--------|
+| GET    | /api/public/products                       | Get all products with pagination         | Public |
+| GET    | /api/public/products/{productId}           | Get a product by ID                      | Public |
+| GET    | /api/public/products/category/{categoryId} | Get products by category with pagination | Public |
+| POST   | /api/public/products                       | Create a new product                     | Public |
+| PUT    | /api/public/products/{productId}           | Update an existing product               | Public |
+| DELETE | /api/admin/products/{productId}            | Delete a product                         | Admin  |
+| POST   | /api/public/products/image/{productId}     | Upload product image                     | Public |
+| GET    | /api/public/products/image/{productId}     | Get product image                        | Public |
 
 ## Database
 
@@ -234,6 +366,7 @@ The application uses JPA/Hibernate for ORM, which allows for easy switching betw
 Currently implemented:
 
 - Category (standalone entity)
+- Product (references Category in a many-to-one relationship)
 
 Future implementations will include additional entities and their relationships.
 
@@ -257,6 +390,9 @@ The project follows several best practices:
 5. **Validation**: Using Jakarta Validation for entity validation
 6. **Logging**: Comprehensive logging using SLF4J
 7. **Resource Naming**: Consistent REST resource naming conventions
+8. **Pagination**: Implemented for all list endpoints to manage large datasets
+9. **Data Transfer Objects**: Using DTOs to separate internal and external data representations
+10. **Response Wrapping**: Consistent response format with metadata for paginated results
 
 ## Troubleshooting
 
@@ -271,7 +407,18 @@ The project follows several best practices:
 This section tracks all significant changes to the project using [Semantic Versioning](https://semver.org/) (
 MAJOR.MINOR.PATCH).
 
-### Version 0.2.0 (August 5, 2025)
+### Version 0.3.0 (August 9, 2025)
+
+- Added Product entity with full CRUD operations
+- Implemented file upload functionality for product images
+- Enhanced pagination with sorting capabilities for all list endpoints
+- Added comprehensive response wrappers for paginated results
+- Implemented many-to-one relationship between Product and Category
+- Added utility classes for mapping between entities and DTOs
+- Added API endpoints for retrieving products by category
+- Improved exception handling for file operations
+
+### Version 0.2.0 (August 9, 2025)
 
 - Added Data Transfer Object (DTO) pattern for Category entity
 - Implemented ModelMapper for entity-DTO conversion
@@ -281,7 +428,7 @@ MAJOR.MINOR.PATCH).
 - Removed code comments for cleaner codebase
 - Updated project documentation with DTO information
 
-### Version 0.1.0 (August 5, 2025)
+### Version 0.1.0 (August 9, 2025)
 
 - Initial project setup
 - Implemented Category management (CRUD operations)
