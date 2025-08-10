@@ -163,10 +163,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📬 Contact
 
-Robert Gleason - [robgleasonjobs122@gmail.com](mailto:your.email@example.com)
-
-Project Link: [https://github.com/yourusername/ecomm-be](https://github.com/yourusername/ecomm-be)
+Robert Gleason - [
 
 ---
 
-⭐️ From [epiq122](https://github.com/yourusername)
+⭐️ From [epiq122](https://github.com/epiq122)
