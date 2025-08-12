@@ -1,4 +1,4 @@
-package ca.robertgleason.ecommbe.security;
+package ca.robertgleason.ecommbe.security.jwt;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

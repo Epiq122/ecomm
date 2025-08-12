@@ -1,4 +1,4 @@
-package ca.robertgleason.ecommbe.security;
+package ca.robertgleason.ecommbe.security.jwt;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +20,6 @@ public class LoginResponse {
         this.jwtToken = jwtToken;
     }
 
-    
+
 }
 
