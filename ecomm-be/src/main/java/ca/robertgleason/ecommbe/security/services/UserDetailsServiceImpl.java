@@ -1,6 +1,7 @@
 package ca.robertgleason.ecommbe.security.services;
 
 import ca.robertgleason.ecommbe.model.User;
+import ca.robertgleason.ecommbe.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
