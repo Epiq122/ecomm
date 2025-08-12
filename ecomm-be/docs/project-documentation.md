@@ -189,6 +189,36 @@ Key attributes:
 - `totalPages`: Total number of pages
 - `lastPage`: Whether this is the last page
 
+#### UserDTO
+
+Located in: `ca/robertgleason/ecommbe/payload/UserDTO.java`
+
+Used for transferring user data to and from the client.
+
+Key attributes:
+
+- `id`: User identifier
+- `username`: Username
+- `email`: Email address
+- `password`: Password
+- `role`: User role (e.g., admin, seller, buyer)
+
+#### AddressDTO
+
+Located in: `ca/robertgleason/ecommbe/payload/AddressDTO.java`
+
+Used for transferring address data to and from the client.
+
+Key attributes:
+
+- `id`: Address identifier
+- `street`: Street name and number
+- `city`: City
+- `state`: State or province
+- `zipCode`: ZIP or postal code
+- `country`: Country
+- `userId`: ID of the user to whom the address belongs
+
 ### Repositories
 
 Repositories provide data access functionality using Spring Data JPA.
@@ -212,6 +242,27 @@ Extends JpaRepository to provide CRUD operations for Product entities.
 Custom methods:
 
 - `findByCategory_CategoryId`: Finds products by their category ID
+
+#### UserRepository
+
+Located in: `ca/robertgleason/ecommbe/repository/UserRepository.java`
+
+Extends JpaRepository to provide CRUD operations for User entities.
+
+Custom methods:
+
+- `findByUsername`: Finds a user by their username
+- `findByEmail`: Finds a user by their email
+
+#### AddressRepository
+
+Located in: `ca/robertgleason/ecommbe/repository/AddressRepository.java`
+
+Extends JpaRepository to provide CRUD operations for Address entities.
+
+Custom methods:
+
+- `findByUser_UserId`: Finds addresses by the user's ID
 
 ### Services
 
@@ -276,6 +327,54 @@ Located in: `ca/robertgleason/ecommbe/service/FileServiceImpl.java`
 
 Implementation of the FileService interface for handling file uploads and retrievals.
 
+#### UserService
+
+Located in: `ca/robertgleason/ecommbe/service/UserService.java`
+
+Interface defining operations for User management:
+
+- `registerUser(UserDTO)`: Register a new user
+- `getUserById(Long)`: Get a user by ID
+- `updateUser(Long, UserDTO)`: Update an existing user
+- `deleteUser(Long)`: Delete a user by ID
+- `getAllUsers(Integer, Integer)`: Retrieve all users with pagination
+
+#### UserServiceImpl
+
+Located in: `ca/robertgleason/ecommbe/service/UserServiceImpl.java`
+
+Implementation of the UserService interface with the following features:
+
+- User registration with role assignment (admin, seller, buyer)
+- Comprehensive validation for user fields
+- Unique constraint enforcement for usernames and emails
+- Error handling and logging
+- Pagination support for user retrieval
+
+#### AddressService
+
+Located in: `ca/robertgleason/ecommbe/service/AddressService.java`
+
+Interface defining operations for Address management:
+
+- `createAddress(AddressDTO)`: Create a new address
+- `getAddressById(Long)`: Get an address by ID
+- `updateAddress(Long, AddressDTO)`: Update an existing address
+- `deleteAddress(Long)`: Delete an address by ID
+- `getAddressesByUserId(Long, Integer, Integer)`: Retrieve all addresses for a user with pagination
+
+#### AddressServiceImpl
+
+Located in: `ca/robertgleason/ecommbe/service/AddressServiceImpl.java`
+
+Implementation of the AddressService interface with features such as:
+
+- Validation of address existence before operations
+- Comprehensive error handling
+- Logging of operations and errors
+- Clean transaction management
+- Pagination support for address retrieval
+
 ### Controllers
 
 Controllers handle HTTP requests and delegate to services for business logic.
@@ -308,6 +407,30 @@ Provides REST endpoints for Product management:
 - `GET /api/public/products/{productId}`: Get a product by ID
 - `POST /api/public/products/image/{productId}`: Upload product image
 - `GET /api/public/products/image/{productId}`: Get product image
+
+#### UserController
+
+Located in: `ca/robertgleason/ecommbe/controller/UserController.java`
+
+Provides REST endpoints for User management:
+
+- `POST /api/public/users/register`: Register a new user
+- `GET /api/public/users/{userId}`: Get a user by ID
+- `PUT /api/public/users/{userId}`: Update an existing user
+- `DELETE /api/admin/users/{userId}`: Delete a user (admin only)
+- `GET /api/public/users`: Get all users with pagination (admin only)
+
+#### AddressController
+
+Located in: `ca/robertgleason/ecommbe/controller/AddressController.java`
+
+Provides REST endpoints for Address management:
+
+- `POST /api/public/addresses`: Create a new address
+- `GET /api/public/addresses/{addressId}`: Get an address by ID
+- `PUT /api/public/addresses/{addressId}`: Update an existing address
+- `DELETE /api/public/addresses/{addressId}`: Delete an address
+- `GET /api/public/users/{userId}/addresses`: Get all addresses for a user with pagination
 
 ### Exception Handling
 
@@ -357,6 +480,26 @@ Global exception handler that catches exceptions and returns appropriate HTTP re
 | POST   | /api/public/products/image/{productId}     | Upload product image                     | Public |
 | GET    | /api/public/products/image/{productId}     | Get product image                        | Public |
 
+### User Management
+
+| Method | Endpoint                   | Description                   | Access |
+|--------|----------------------------|-------------------------------|--------|
+| POST   | /api/public/users/register | Register a new user           | Public |
+| GET    | /api/public/users/{userId} | Get a user by ID              | Public |
+| PUT    | /api/public/users/{userId} | Update an existing user       | Public |
+| DELETE | /api/admin/users/{userId}  | Delete a user                 | Admin  |
+| GET    | /api/public/users          | Get all users with pagination | Admin  |
+
+### Address Management
+
+| Method | Endpoint                             | Description                                  | Access |
+|--------|--------------------------------------|----------------------------------------------|--------|
+| POST   | /api/public/addresses                | Create a new address                         | Public |
+| GET    | /api/public/addresses/{addressId}    | Get an address by ID                         | Public |
+| PUT    | /api/public/addresses/{addressId}    | Update an existing address                   | Public |
+| DELETE | /api/public/addresses/{addressId}    | Delete an address                            | Public |
+| GET    | /api/public/users/{userId}/addresses | Get all addresses for a user with pagination | Public |
+
 ## Database
 
 The application uses JPA/Hibernate for ORM, which allows for easy switching between different database providers.
@@ -367,6 +510,8 @@ Currently implemented:
 
 - Category (standalone entity)
 - Product (references Category in a many-to-one relationship)
+- User (with roles and addresses)
+- Address (many-to-many relationship with User)
 
 Future implementations will include additional entities and their relationships.
 
@@ -407,7 +552,27 @@ The project follows several best practices:
 This section tracks all significant changes to the project using [Semantic Versioning](https://semver.org/) (
 MAJOR.MINOR.PATCH).
 
-### Version 0.3.0 (August 9, 2025)
+### Version 0.5.0 (August 11, 2025)
+
+- Implemented comprehensive user profile management system
+- Added User entity with username, email, and password fields
+- Created Role-based authorization system with User, Seller, and Admin roles
+- Implemented Address management for user profiles with detailed address fields
+- Added many-to-many relationship between Users and Addresses
+- Connected Products to Users (sellers) with one-to-many relationship
+- Implemented validation for all user profile fields
+- Added unique constraints for username and email
+
+### Version 0.4.0 (August 9, 2025)
+
+- Enhanced pagination support with improved response metadata for all endpoints
+- Added comprehensive page navigation information (current page, total pages, last page indicator)
+- Optimized query performance for paginated results
+- Standardized pagination parameter handling across all controllers
+- Added consistent error messages for invalid pagination parameters
+- Improved documentation with detailed pagination examples
+
+### Version 0.3.0 (August 7, 2025)
 
 - Added Product entity with full CRUD operations
 - Implemented file upload functionality for product images
