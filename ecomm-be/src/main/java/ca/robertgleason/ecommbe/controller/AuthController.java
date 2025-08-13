@@ -13,7 +13,9 @@ import ca.robertgleason.ecommbe.security.response.UserInfoResponse;
 import ca.robertgleason.ecommbe.security.services.UserDetailsImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,7 +31,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -51,6 +52,7 @@ public class AuthController {
     @Autowired
     private RoleRepository roleRepository;
 
+
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
         try {
@@ -60,20 +62,20 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-            String jwt = jwtUtils.generateTokenFromUsername(userDetails);
-
+            ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
 
             List<String> roles = userDetails.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.toList());
 
-            return ResponseEntity.ok(new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), roles, jwt));
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                    .body(new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), roles));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Invalid username or password"));
+                    .body(new MessageResponse("Error: Invalid username or password"));
         }
     }
-
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
