@@ -141,4 +141,14 @@ public class AuthController {
                 .body(new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), roles));
     }
 
+
+    @PostMapping("/signout")
+    public ResponseEntity<?> signoutUser(Authentication authentication) {
+        ResponseCookie jwtCookie = jwtUtils.getCleanJwtCookie();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .body(new MessageResponse("User signed out successfully!"));
+    }
+
+
 }

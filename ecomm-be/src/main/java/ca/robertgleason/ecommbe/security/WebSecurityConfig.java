@@ -72,6 +72,7 @@ public class WebSecurityConfig {
                                 .anyRequest().authenticated()
                 );
 
+
         // Add this line to set your UserDetailsService
         http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

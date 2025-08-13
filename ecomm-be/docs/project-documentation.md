@@ -8,11 +8,18 @@
 4. [Setup and Installation](#setup-and-installation)
 5. [Core Components](#core-components)
     - [Models](#models)
+    - [Data Transfer Objects (DTOs)](#data-transfer-objects-dtos)
     - [Repositories](#repositories)
     - [Services](#services)
     - [Controllers](#controllers)
+    - [Security Components](#security-components)
     - [Exception Handling](#exception-handling)
 6. [API Endpoints](#api-endpoints)
+    - [Authentication Endpoints](#authentication-endpoints)
+    - [Category Management](#category-management)
+    - [Product Management](#product-management)
+    - [User Management](#user-management)
+    - [Address Management](#address-management)
 7. [Database](#database)
 8. [Authentication and Authorization](#authentication-and-authorization)
 9. [Common Patterns and Best Practices](#common-patterns-and-best-practices)
@@ -55,11 +62,14 @@ src/
 - **Java**: Core programming language
 - **Spring Boot**: Application framework
 - **Spring Data JPA**: Data access
+- **Spring Security**: Authentication and authorization
+- **JWT (JSON Web Tokens)**: Secure authentication mechanism
 - **Hibernate**: ORM for database interactions
 - **Jakarta Validation**: Data validation
 - **Lombok**: Reduces boilerplate code
 - **SLF4J**: Logging framework
 - **ModelMapper**: Object mapping between DTOs and entities
+- **BCrypt**: Password encryption
 
 ## Setup and Installation
 
@@ -79,11 +89,48 @@ src/
 
 ## Core Components
 
-### Models
+#### Models
 
-Models represent the database entities. Currently implemented:
+- Category: Basic category management
+- Product: Associated with Category (many-to-one)
+- User: Username, email, password, roles
+- Role: Enum-backed roles (ROLE_USER, ROLE_SELLER, ROLE_ADMIN)
+- Address: Linked to User
 
-#### Category
+#### User
+
+Located in: `ca/robertgleason/ecommbe/model/User.java`
+
+Represents users in the e-commerce system.
+
+Key attributes:
+
+- `id`: Primary key using database auto-increment
+- `username`: Unique username for authentication
+- `email`: User's email address (unique)
+- `password`: Encrypted password (using BCrypt)
+- `roles`: Set of Role entities assigned to the user
+
+#### Role
+
+Located in: `ca/robertgleason/ecommbe/model/Role.java`
+
+Represents role-based access control for users.
+
+Key attributes:
+
+- `id`: Primary key using database auto-increment
+- `roleName`: Enum-based role name (ROLE_USER, ROLE_ADMIN, ROLE_SELLER)
+
+#### AppRole
+
+Located in: `ca/robertgleason/ecommbe/model/AppRole.java`
+
+Enum defining the available roles in the system:
+
+- `ROLE_USER`: Standard user with basic permissions
+- `ROLE_SELLER`: User with seller privileges
+- `ROLE_ADMIN`: Administrator with full system access
 
 Located in: `ca/robertgleason/ecommbe/model/Category.java`
 
@@ -400,6 +447,7 @@ Located in: `ca/robertgleason/ecommbe/controller/ProductController.java`
 Provides REST endpoints for Product management:
 
 - `GET /api/public/products`: Retrieve all products with pagination
+- `GET /api/public/products/{productId}`: Get a product by ID
 - `GET /api/public/products/category/{categoryId}`: Get products by category with pagination
 - `POST /api/public/products`: Create a new product
 - `DELETE /api/admin/products/{productId}`: Delete a product (admin only)
@@ -432,6 +480,70 @@ Provides REST endpoints for Address management:
 - `DELETE /api/public/addresses/{addressId}`: Delete an address
 - `GET /api/public/users/{userId}/addresses`: Get all addresses for a user with pagination
 
+### Security Components
+
+The application implements a comprehensive JWT-based authentication and authorization system using Spring Security.
+
+#### WebSecurityConfig
+
+Located in: `ca/robertgleason/ecommbe/security/WebSecurityConfig.java`
+
+Central configuration class for Spring Security that:
+
+- Configures stateless session management
+- Defines security filter chain
+- Sets up CSRF protection with exceptions for auth endpoints
+- Configures JWT token filter
+- Establishes authentication entry point for unauthorized requests
+- Defines accessible endpoints without authentication
+- Configures password encoding with BCrypt
+- Initializes default roles and test users
+
+#### JwtUtils
+
+Located in: `ca/robertgleason/ecommbe/security/jwt/JwtUtils.java`
+
+Utility class for JWT token operations:
+
+- Generates JWT tokens based on user authentication
+- Creates secure HTTP-only cookies containing JWT tokens
+- Validates JWT tokens from requests
+- Extracts username from JWT tokens
+- Handles token expiration and signing
+- Provides clean cookies for user logout
+
+#### AuthTokenFilter
+
+Located in: `ca/robertgleason/ecommbe/security/jwt/AuthTokenFilter.java`
+
+JWT authentication filter that:
+
+- Extracts JWT token from HTTP cookies
+- Validates the token using JwtUtils
+- Loads user details if token is valid
+- Sets the authenticated user in Spring Security context
+- Passes the request through the filter chain
+
+#### AuthEntryPointJwt
+
+Located in: `ca/robertgleason/ecommbe/security/jwt/AuthEntryPointJwt.java`
+
+Entry point for handling authentication errors:
+
+- Returns 401 Unauthorized responses for invalid authentication
+- Formats error responses in JSON format
+- Logs authentication failures
+
+#### UserDetailsServiceImpl
+
+Located in: `ca/robertgleason/ecommbe/security/services/UserDetailsServiceImpl.java`
+
+Implements Spring Security's UserDetailsService interface:
+
+- Loads user data from the database for authentication
+- Converts application User entity to Spring Security's UserDetails
+- Maps user roles to granted authorities
+
 ### Exception Handling
 
 The application implements a global exception handling strategy to provide consistent error responses.
@@ -456,6 +568,15 @@ Located in: `ca/robertgleason/ecommbe/excepetions/MyGlobalExceptionHandler.java`
 Global exception handler that catches exceptions and returns appropriate HTTP responses with meaningful error messages.
 
 ## API Endpoints
+
+### Authentication Endpoints
+
+| Method | Endpoint          | Description                       | Access |
+|--------|-------------------|-----------------------------------|--------|
+| POST   | /api/auth/signin  | Sign in a user                    | Public |
+| POST   | /api/auth/signup  | Register a new user               | Public |
+| POST   | /api/auth/signout | Sign out the authenticated user   | User   |
+| GET    | /api/auth/user    | Get the authenticated user's info | User   |
 
 ### Category Management
 
@@ -563,14 +684,17 @@ MAJOR.MINOR.PATCH).
 - Implemented validation for all user profile fields
 - Added unique constraints for username and email
 
-### Version 0.4.0 (August 9, 2025)
+### Version 0.4.0 (August 12, 2025)
 
-- Enhanced pagination support with improved response metadata for all endpoints
-- Added comprehensive page navigation information (current page, total pages, last page indicator)
-- Optimized query performance for paginated results
-- Standardized pagination parameter handling across all controllers
-- Added consistent error messages for invalid pagination parameters
-- Improved documentation with detailed pagination examples
+- Implemented JWT-based authentication system with token management
+- Added user registration and login functionality
+- Created role-based authorization (USER, SELLER, ADMIN roles)
+- Implemented secure password handling with BCrypt encryption
+- Added JWT token generation, validation, and cookie-based storage
+- Created endpoints for user authentication, registration, and logout
+- Implemented user profile information retrieval
+- Added automatic initialization of default roles and test users
+- Fixed CSRF configuration for authentication endpoints
 
 ### Version 0.3.0 (August 7, 2025)
 
