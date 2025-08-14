@@ -1,36 +1,38 @@
 # E-commerce Backend API
 
 A robust and scalable RESTful API for e-commerce applications built with Spring Boot. This backend provides
-comprehensive functionality for managing products, categories, and more with a clean architecture and best practices
-implementation.
+comprehensive functionality for managing products and categories, with JWT-based authentication, clean architecture,
+and production-ready best practices.
 
-![Java](https://img.shields.io/badge/Java-17-orange)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.1-brightgreen)
+![Java](https://img.shields.io/badge/Java-21-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.4-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
+
+Last Updated: August 14, 2025
 
 ## 🌟 Features
 
-- **Category Management**: CRUD operations for product categories
-- **Product Management**: Complete product lifecycle management
+- **JWT Authentication**: Secure, stateless auth using HttpOnly cookies
+- **Role-Based Access**: Admin endpoints protected; public endpoints for reads
+- **Category Management**: Create, update, list, and delete categories
+- **Product Management**: Create, update, list, and search products
 - **Image Upload**: File handling for product images
 - **Pagination & Sorting**: Efficient data retrieval with customizable pagination
 - **Exception Handling**: Comprehensive global exception handling
-- **Data Validation**: Robust input validation
-- **Clean Architecture**: Separation of concerns with controller, service, and repository layers
-- **DTO Pattern**: Data Transfer Objects for clean API contracts
-- **RESTful Design**: Follows REST principles with appropriate HTTP methods and status codes
+- **Validation**: Robust input validation
+- **Clean Architecture**: Controller, Service, Repository separation with DTOs
 
 ## 🛠️ Technology Stack
 
-- **Java 17**: Core programming language
-- **Spring Boot**: Application framework
-- **Spring Data JPA**: Data persistence
-- **Hibernate**: ORM for database interactions
-- **Jakarta Validation**: Input validation
-- **Lombok**: Reduces boilerplate code
-- **ModelMapper**: Object mapping between DTOs and entities
-- **SLF4J**: Logging framework
-- **H2 Database**: In-memory database (configurable for production databases)
+- **Java 21**
+- **Spring Boot 3.5.x**
+- **Spring Security (JWT)**
+- **Spring Data JPA / Hibernate**
+- **Jakarta Validation**
+- **Lombok**
+- **ModelMapper**
+- **SLF4J**
+- **H2 Database** (in-memory by default)
 
 ## 📋 Project Structure
 
@@ -38,21 +40,21 @@ implementation.
 src/main/java/ca/robertgleason/ecommbe/
 ├── config/               # Application configuration
 ├── controller/           # REST controllers
-├── exceptions/           # Global exception handling
+├── excepetions/          # Global exception handling
 ├── model/                # Entity definitions
 ├── payload/              # Data Transfer Objects
 ├── repository/           # Data access interfaces
+├── security/             # JWT & security classes
 ├── service/              # Business logic
-└── utilities/            # Helper classes
+└── utilties/             # Helper classes
 ```
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- Java 17 or higher
+- Java 21 or higher
 - Maven
-- Your favorite IDE (IntelliJ IDEA, Eclipse, VS Code)
 
 ### Installation
 
@@ -61,101 +63,115 @@ src/main/java/ca/robertgleason/ecommbe/
    git clone https://github.com/yourusername/ecomm-be.git
    cd ecomm-be
    ```
-
 2. Build the project:
    ```bash
    mvn clean install
    ```
-
 3. Run the application:
    ```bash
    mvn spring-boot:run
    ```
-
 4. The API will be available at `http://localhost:8080`
 
-## 📝 API Documentation
+## ⚙️ Configuration
 
-### Categories
-
-| Method | Endpoint                    | Description                    |
-|--------|-----------------------------|--------------------------------|
-| GET    | /api/public/categories      | Get all categories (paginated) |
-| GET    | /api/public/categories/{id} | Get a specific category        |
-| POST   | /api/public/categories      | Create a new category          |
-| PUT    | /api/public/categories/{id} | Update an existing category    |
-| DELETE | /api/admin/categories/{id}  | Delete a category (admin only) |
-
-### Products
-
-| Method | Endpoint                                   | Description                   |
-|--------|--------------------------------------------|-------------------------------|
-| GET    | /api/public/products                       | Get all products (paginated)  |
-| GET    | /api/public/products/{id}                  | Get a specific product        |
-| GET    | /api/public/products/category/{categoryId} | Get products by category      |
-| POST   | /api/public/products                       | Create a new product          |
-| PUT    | /api/public/products/{id}                  | Update an existing product    |
-| DELETE | /api/admin/products/{id}                   | Delete a product (admin only) |
-| POST   | /api/public/products/image/{productId}     | Upload product image          |
-| GET    | /api/public/products/image/{productId}     | Get product image             |
-
-### Pagination and Sorting
-
-All collection endpoints support pagination and sorting with the following query parameters:
-
-- `pageNumber`: Zero-based page index (default: 0)
-- `pageSize`: Page size (default: 10)
-- `sortBy`: Field to sort by (default varies by endpoint)
-- `sortDir`: Sort direction - 'asc' or 'desc' (default: 'asc')
-
-Example:
+Key application.properties (defaults provided):
 
 ```
-GET /api/public/products?pageNumber=0&pageSize=10&sortBy=price&sortDir=desc
+# H2 & JPA
+spring.h2.console.enabled=true
+spring.datasource.url=jdbc:h2:mem:test
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+# Images
+project.image=images/
+
+# JWT
+spring.app.jwtSecret=...your-secret...
+spring.app.jwtExpirationMs=36000000
+spring.app.jwtCookieName=springbootBE
+
+# Logging (optional)
+logging.level.org.springframework.security=DEBUG
+logging.level.org.hibernate.SQL=DEBUG
 ```
+
+- H2 console: http://localhost:8080/h2-console
+- Static images served under `/images/**`
 
 ## 🔒 Security
 
-The API has two access levels:
+- Stateless JWT security via HttpOnly cookies
+- Whitelisted (no auth required): `/api/auth/**`, `/v3/api-docs/**`, `/swagger-ui/**`, `/h2-console/**`, `/api/test/**`, `/images/**`
+- All other endpoints require authentication
+- Seeded users (for local testing):
+  - admin / adminPass (ROLE_USER, ROLE_SELLER, ROLE_ADMIN)
+  - seller1 / password2 (ROLE_SELLER)
+  - user1 / password1 (ROLE_USER)
 
-- Public endpoints (`/api/public/**`): Accessible to all users
-- Admin endpoints (`/api/admin/**`): Restricted to administrators
+Authentication endpoints:
 
-*Note: Authentication and authorization are planned for future releases.*
+| Method | Endpoint          | Description                       |
+|--------|-------------------|-----------------------------------|
+| POST   | /api/auth/signin  | Authenticate; sets JWT cookie     |
+| POST   | /api/auth/signup  | Register a new user               |
+| POST   | /api/auth/signout | Clear JWT cookie (logout)         |
+| GET    | /api/auth/user    | Get current user info (requires auth) |
+
+Note: Path segments like `/public` denote read-oriented resources but still require authentication unless explicitly whitelisted.
+
+## 📝 API Overview
+
+### Categories
+
+| Method | Endpoint                             | Description                             |
+|--------|--------------------------------------|-----------------------------------------|
+| GET    | /api/public/categories               | Get all categories (paginated)          |
+| POST   | /api/public/categories               | Create a new category                    |
+| PUT    | /api/public/categories/{categoryId}  | Update an existing category              |
+| DELETE | /api/admin/categories/{categoryId}   | Delete a category (admin only)           |
+
+### Products
+
+| Method | Endpoint                                            | Description                                   |
+|--------|-----------------------------------------------------|-----------------------------------------------|
+| GET    | /api/public/products                                | Get all products (paginated)                  |
+| GET    | /api/public/categories/{categoryId}/products        | Get products by category (paginated)          |
+| GET    | /api/public/products/keyword/{keyword}              | Search products by keyword (paginated)        |
+| POST   | /api/admin/categories/{categoryId}/product          | Create a new product in a category (admin)    |
+| PUT    | /api/admin/products/{productId}                     | Update an existing product (admin)            |
+| DELETE | /api/admin/products/{productId}                     | Delete a product (admin)                      |
+| PUT    | /api/products/{productId}/image                     | Update product image                           |
+
+### Pagination and Sorting
+
+All collection endpoints support pagination/sorting parameters:
+- `pageNumber` (default: 0)
+- `pageSize` (default: 10)
+- `sortBy` (endpoint-specific default)
+- `sortOrder`: `asc` or `desc` (default: `asc`)
+
+Example:
+```
+GET /api/public/products?pageNumber=0&pageSize=10&sortBy=price&sortOrder=desc
+```
 
 ## 🧪 Testing
-
-Run the tests with Maven:
 
 ```bash
 mvn test
 ```
 
-## 📚 Documentation
+## 📚 Further Documentation
 
-For more detailed documentation on the project architecture, design patterns, and best practices, see:
+- Project Documentation: docs/project-documentation.md
+- Spring Boot Best Practices: docs/spring-boot-best-practices.md
 
-- [Project Documentation](docs/project-documentation.md)
-- [Spring Boot Best Practices](docs/spring-boot-best-practices.md)
+## 🗓️ Changelog
 
-## 🛣️ Roadmap
-
-- User authentication and authorization
-- Order management
-- Payment processing integration
-- Review and rating system
-- Search functionality with filters
-- Performance optimizations
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+- 2025-08-14: Upgraded docs and configuration; verified JWT via HttpOnly cookies and stateless security; confirmed seeded users and whitelist; aligned README and project documentation; updated versions (Java 21, Spring Boot 3.5.4).
 
 ## 📄 License
 
@@ -163,10 +179,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📬 Contact
 
-Robert Gleason - [robgleasonjobs122@gmail.com](mailto:your.email@example.com)
+Robert Gleason - robgleasonjobs122@gmail.com
 
-Project Link: [https://github.com/yourusername/ecomm-be](https://github.com/yourusername/ecomm-be)
-
----
-
-⭐️ From [epiq122](https://github.com/yourusername)
+Project Link: https://github.com/yourusername/ecomm-be

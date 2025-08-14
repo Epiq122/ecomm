@@ -1,5 +1,8 @@
 # E-commerce Backend Documentation
 
+Last Updated: August 14, 2025
+Version: 0.0.1-SNAPSHOT
+
 ## Table of Contents
 
 1. [Project Overview](#project-overview)
@@ -59,8 +62,8 @@ src/
 
 ## Technology Stack
 
-- **Java**: Core programming language
-- **Spring Boot**: Application framework
+- **Java 21**
+- **Spring Boot 3.5.x**
 - **Spring Data JPA**: Data access
 - **Spring Security**: Authentication and authorization
 - **JWT (JSON Web Tokens)**: Secure authentication mechanism
@@ -75,7 +78,7 @@ src/
 
 ### Prerequisites
 
-- Java 17 or higher
+- Java 21 or higher
 - Maven
 - A suitable IDE (IntelliJ IDEA, Eclipse, VS Code)
 - Database (H2 in-memory by default, can be configured for PostgreSQL, MySQL, etc.)
@@ -434,9 +437,8 @@ Provides REST endpoints for Category management:
 
 - `GET /api/public/categories`: Retrieve all categories with pagination
 - `POST /api/public/categories`: Create a new category
-- `DELETE /api/admin/categories/{categoryId}`: Delete a category (admin only)
 - `PUT /api/public/categories/{categoryId}`: Update an existing category
-- `GET /api/public/categories/{categoryId}`: Get a category by ID
+- `DELETE /api/admin/categories/{categoryId}`: Delete a category (admin only)
 
 Note the separation between public and admin endpoints for security purposes.
 
@@ -447,38 +449,20 @@ Located in: `ca/robertgleason/ecommbe/controller/ProductController.java`
 Provides REST endpoints for Product management:
 
 - `GET /api/public/products`: Retrieve all products with pagination
-- `GET /api/public/products/{productId}`: Get a product by ID
-- `GET /api/public/products/category/{categoryId}`: Get products by category with pagination
-- `POST /api/public/products`: Create a new product
+- `GET /api/public/categories/{categoryId}/products`: Get products by category with pagination
+- `GET /api/public/products/keyword/{keyword}`: Search products by keyword with pagination
+- `POST /api/admin/categories/{categoryId}/product`: Create a new product (admin only)
+- `PUT /api/admin/products/{productId}`: Update an existing product (admin only)
 - `DELETE /api/admin/products/{productId}`: Delete a product (admin only)
-- `PUT /api/public/products/{productId}`: Update an existing product
-- `GET /api/public/products/{productId}`: Get a product by ID
-- `POST /api/public/products/image/{productId}`: Upload product image
-- `GET /api/public/products/image/{productId}`: Get product image
+- `PUT /api/products/{productId}/image`: Update product image
 
-#### UserController
+#### UserController (Planned)
 
-Located in: `ca/robertgleason/ecommbe/controller/UserController.java`
+Note: This controller is planned and not present in the current codebase. The following endpoints are subject to change and will be finalized upon implementation.
 
-Provides REST endpoints for User management:
+#### AddressController (Planned)
 
-- `POST /api/public/users/register`: Register a new user
-- `GET /api/public/users/{userId}`: Get a user by ID
-- `PUT /api/public/users/{userId}`: Update an existing user
-- `DELETE /api/admin/users/{userId}`: Delete a user (admin only)
-- `GET /api/public/users`: Get all users with pagination (admin only)
-
-#### AddressController
-
-Located in: `ca/robertgleason/ecommbe/controller/AddressController.java`
-
-Provides REST endpoints for Address management:
-
-- `POST /api/public/addresses`: Create a new address
-- `GET /api/public/addresses/{addressId}`: Get an address by ID
-- `PUT /api/public/addresses/{addressId}`: Update an existing address
-- `DELETE /api/public/addresses/{addressId}`: Delete an address
-- `GET /api/public/users/{userId}/addresses`: Get all addresses for a user with pagination
+Note: This controller is planned and not present in the current codebase. Functionality and endpoints will be documented upon implementation.
 
 ### Security Components
 
@@ -492,7 +476,7 @@ Central configuration class for Spring Security that:
 
 - Configures stateless session management
 - Defines security filter chain
-- Sets up CSRF protection with exceptions for auth endpoints
+- Disables CSRF for stateless JWT-based API
 - Configures JWT token filter
 - Establishes authentication entry point for unauthorized requests
 - Defines accessible endpoints without authentication
@@ -583,43 +567,29 @@ Global exception handler that catches exceptions and returns appropriate HTTP re
 | Method | Endpoint                            | Description                        | Access |
 |--------|-------------------------------------|------------------------------------|--------|
 | GET    | /api/public/categories              | Get all categories with pagination | Public |
-| GET    | /api/public/categories/{categoryId} | Get a category by ID               | Public |
 | POST   | /api/public/categories              | Create a new category              | Public |
 | PUT    | /api/public/categories/{categoryId} | Update an existing category        | Public |
 | DELETE | /api/admin/categories/{categoryId}  | Delete a category                  | Admin  |
 
 ### Product Management
 
-| Method | Endpoint                                   | Description                              | Access |
-|--------|--------------------------------------------|------------------------------------------|--------|
-| GET    | /api/public/products                       | Get all products with pagination         | Public |
-| GET    | /api/public/products/{productId}           | Get a product by ID                      | Public |
-| GET    | /api/public/products/category/{categoryId} | Get products by category with pagination | Public |
-| POST   | /api/public/products                       | Create a new product                     | Public |
-| PUT    | /api/public/products/{productId}           | Update an existing product               | Public |
-| DELETE | /api/admin/products/{productId}            | Delete a product                         | Admin  |
-| POST   | /api/public/products/image/{productId}     | Upload product image                     | Public |
-| GET    | /api/public/products/image/{productId}     | Get product image                        | Public |
+| Method | Endpoint                                   | Description                                   | Access |
+|--------|--------------------------------------------|-----------------------------------------------|--------|
+| GET    | /api/public/products                       | Get all products with pagination              | Public |
+| GET    | /api/public/categories/{categoryId}/products | Get products by category with pagination    | Public |
+| GET    | /api/public/products/keyword/{keyword}     | Search products by keyword with pagination    | Public |
+| POST   | /api/admin/categories/{categoryId}/product | Create a new product in a category            | Admin  |
+| PUT    | /api/admin/products/{productId}            | Update an existing product                    | Admin  |
+| DELETE | /api/admin/products/{productId}            | Delete a product                              | Admin  |
+| PUT    | /api/products/{productId}/image            | Update product image                           | User   |
 
-### User Management
+### User Management (Planned)
 
-| Method | Endpoint                   | Description                   | Access |
-|--------|----------------------------|-------------------------------|--------|
-| POST   | /api/public/users/register | Register a new user           | Public |
-| GET    | /api/public/users/{userId} | Get a user by ID              | Public |
-| PUT    | /api/public/users/{userId} | Update an existing user       | Public |
-| DELETE | /api/admin/users/{userId}  | Delete a user                 | Admin  |
-| GET    | /api/public/users          | Get all users with pagination | Admin  |
+Note: User management endpoints are planned and not currently implemented in this codebase. This section will be finalized upon implementation.
 
-### Address Management
+### Address Management (Planned)
 
-| Method | Endpoint                             | Description                                  | Access |
-|--------|--------------------------------------|----------------------------------------------|--------|
-| POST   | /api/public/addresses                | Create a new address                         | Public |
-| GET    | /api/public/addresses/{addressId}    | Get an address by ID                         | Public |
-| PUT    | /api/public/addresses/{addressId}    | Update an existing address                   | Public |
-| DELETE | /api/public/addresses/{addressId}    | Delete an address                            | Public |
-| GET    | /api/public/users/{userId}/addresses | Get all addresses for a user with pagination | Public |
+Note: Address management endpoints are planned and not currently implemented in this codebase. This section will be finalized upon implementation.
 
 ## Database
 
@@ -638,12 +608,12 @@ Future implementations will include additional entities and their relationships.
 
 ## Authentication and Authorization
 
-The API has endpoints with different access levels:
+The application implements JWT-based authentication with stateless sessions and role-based access control.
 
-- Public endpoints: Accessible to all users
-- Admin endpoints: Restricted to administrators
-
-*Note: Authentication and authorization mechanisms are not yet implemented but are planned for future development.*
+- Whitelisted (no auth): `/api/auth/**`, `/v3/api-docs/**`, `/swagger-ui/**`, `/h2-console/**`, `/api/test/**`, `/images/**`
+- All other endpoints require authentication
+- Roles: `ROLE_USER`, `ROLE_SELLER`, `ROLE_ADMIN`
+- Auth flow: `POST /api/auth/signin` issues an HttpOnly JWT cookie; `POST /api/auth/signout` clears it; `GET /api/auth/user` returns the current user
 
 ## Common Patterns and Best Practices
 
@@ -672,6 +642,13 @@ The project follows several best practices:
 
 This section tracks all significant changes to the project using [Semantic Versioning](https://semver.org/) (
 MAJOR.MINOR.PATCH).
+
+### Version 0.5.1 (August 14, 2025)
+
+- Documentation refresh: professional formatting, added version header, and updated "Last Updated" date.
+- Security docs aligned with code: stateless JWT, CSRF disabled, whitelisted endpoints, seeded users.
+- Technology updates reflected: Java 21, Spring Boot 3.5.x.
+- Clarified planned modules (User Management, Address Management) and removed unimplemented endpoint tables.
 
 ### Version 0.5.0 (August 11, 2025)
 
