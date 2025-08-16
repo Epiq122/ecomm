@@ -458,11 +458,13 @@ Provides REST endpoints for Product management:
 
 #### UserController (Planned)
 
-Note: This controller is planned and not present in the current codebase. The following endpoints are subject to change and will be finalized upon implementation.
+Note: This controller is planned and not present in the current codebase. The following endpoints are subject to change
+and will be finalized upon implementation.
 
 #### AddressController (Planned)
 
-Note: This controller is planned and not present in the current codebase. Functionality and endpoints will be documented upon implementation.
+Note: This controller is planned and not present in the current codebase. Functionality and endpoints will be documented
+upon implementation.
 
 ### Security Components
 
@@ -573,23 +575,25 @@ Global exception handler that catches exceptions and returns appropriate HTTP re
 
 ### Product Management
 
-| Method | Endpoint                                   | Description                                   | Access |
-|--------|--------------------------------------------|-----------------------------------------------|--------|
-| GET    | /api/public/products                       | Get all products with pagination              | Public |
-| GET    | /api/public/categories/{categoryId}/products | Get products by category with pagination    | Public |
-| GET    | /api/public/products/keyword/{keyword}     | Search products by keyword with pagination    | Public |
-| POST   | /api/admin/categories/{categoryId}/product | Create a new product in a category            | Admin  |
-| PUT    | /api/admin/products/{productId}            | Update an existing product                    | Admin  |
-| DELETE | /api/admin/products/{productId}            | Delete a product                              | Admin  |
-| PUT    | /api/products/{productId}/image            | Update product image                           | User   |
+| Method | Endpoint                                     | Description                                | Access |
+|--------|----------------------------------------------|--------------------------------------------|--------|
+| GET    | /api/public/products                         | Get all products with pagination           | Public |
+| GET    | /api/public/categories/{categoryId}/products | Get products by category with pagination   | Public |
+| GET    | /api/public/products/keyword/{keyword}       | Search products by keyword with pagination | Public |
+| POST   | /api/admin/categories/{categoryId}/product   | Create a new product in a category         | Admin  |
+| PUT    | /api/admin/products/{productId}              | Update an existing product                 | Admin  |
+| DELETE | /api/admin/products/{productId}              | Delete a product                           | Admin  |
+| PUT    | /api/products/{productId}/image              | Update product image                       | User   |
 
 ### User Management (Planned)
 
-Note: User management endpoints are planned and not currently implemented in this codebase. This section will be finalized upon implementation.
+Note: User management endpoints are planned and not currently implemented in this codebase. This section will be
+finalized upon implementation.
 
 ### Address Management (Planned)
 
-Note: Address management endpoints are planned and not currently implemented in this codebase. This section will be finalized upon implementation.
+Note: Address management endpoints are planned and not currently implemented in this codebase. This section will be
+finalized upon implementation.
 
 ## Database
 
@@ -610,10 +614,12 @@ Future implementations will include additional entities and their relationships.
 
 The application implements JWT-based authentication with stateless sessions and role-based access control.
 
-- Whitelisted (no auth): `/api/auth/**`, `/v3/api-docs/**`, `/swagger-ui/**`, `/h2-console/**`, `/api/test/**`, `/images/**`
+- Whitelisted (no auth): `/api/auth/**`, `/v3/api-docs/**`, `/swagger-ui/**`, `/h2-console/**`, `/api/test/**`,
+  `/images/**`
 - All other endpoints require authentication
 - Roles: `ROLE_USER`, `ROLE_SELLER`, `ROLE_ADMIN`
-- Auth flow: `POST /api/auth/signin` issues an HttpOnly JWT cookie; `POST /api/auth/signout` clears it; `GET /api/auth/user` returns the current user
+- Auth flow: `POST /api/auth/signin` issues an HttpOnly JWT cookie; `POST /api/auth/signout` clears it;
+  `GET /api/auth/user` returns the current user
 
 ## Common Patterns and Best Practices
 

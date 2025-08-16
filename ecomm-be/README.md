@@ -104,56 +104,60 @@ logging.level.org.hibernate.SQL=DEBUG
 ## 🔒 Security
 
 - Stateless JWT security via HttpOnly cookies
-- Whitelisted (no auth required): `/api/auth/**`, `/v3/api-docs/**`, `/swagger-ui/**`, `/h2-console/**`, `/api/test/**`, `/images/**`
+- Whitelisted (no auth required): `/api/auth/**`, `/v3/api-docs/**`, `/swagger-ui/**`, `/h2-console/**`, `/api/test/**`,
+  `/images/**`
 - All other endpoints require authentication
 - Seeded users (for local testing):
-  - admin / adminPass (ROLE_USER, ROLE_SELLER, ROLE_ADMIN)
-  - seller1 / password2 (ROLE_SELLER)
-  - user1 / password1 (ROLE_USER)
+    - admin / adminPass (ROLE_USER, ROLE_SELLER, ROLE_ADMIN)
+    - seller1 / password2 (ROLE_SELLER)
+    - user1 / password1 (ROLE_USER)
 
 Authentication endpoints:
 
-| Method | Endpoint          | Description                       |
-|--------|-------------------|-----------------------------------|
-| POST   | /api/auth/signin  | Authenticate; sets JWT cookie     |
-| POST   | /api/auth/signup  | Register a new user               |
-| POST   | /api/auth/signout | Clear JWT cookie (logout)         |
+| Method | Endpoint          | Description                           |
+|--------|-------------------|---------------------------------------|
+| POST   | /api/auth/signin  | Authenticate; sets JWT cookie         |
+| POST   | /api/auth/signup  | Register a new user                   |
+| POST   | /api/auth/signout | Clear JWT cookie (logout)             |
 | GET    | /api/auth/user    | Get current user info (requires auth) |
 
-Note: Path segments like `/public` denote read-oriented resources but still require authentication unless explicitly whitelisted.
+Note: Path segments like `/public` denote read-oriented resources but still require authentication unless explicitly
+whitelisted.
 
 ## 📝 API Overview
 
 ### Categories
 
-| Method | Endpoint                             | Description                             |
-|--------|--------------------------------------|-----------------------------------------|
-| GET    | /api/public/categories               | Get all categories (paginated)          |
-| POST   | /api/public/categories               | Create a new category                    |
-| PUT    | /api/public/categories/{categoryId}  | Update an existing category              |
-| DELETE | /api/admin/categories/{categoryId}   | Delete a category (admin only)           |
+| Method | Endpoint                            | Description                    |
+|--------|-------------------------------------|--------------------------------|
+| GET    | /api/public/categories              | Get all categories (paginated) |
+| POST   | /api/public/categories              | Create a new category          |
+| PUT    | /api/public/categories/{categoryId} | Update an existing category    |
+| DELETE | /api/admin/categories/{categoryId}  | Delete a category (admin only) |
 
 ### Products
 
-| Method | Endpoint                                            | Description                                   |
-|--------|-----------------------------------------------------|-----------------------------------------------|
-| GET    | /api/public/products                                | Get all products (paginated)                  |
-| GET    | /api/public/categories/{categoryId}/products        | Get products by category (paginated)          |
-| GET    | /api/public/products/keyword/{keyword}              | Search products by keyword (paginated)        |
-| POST   | /api/admin/categories/{categoryId}/product          | Create a new product in a category (admin)    |
-| PUT    | /api/admin/products/{productId}                     | Update an existing product (admin)            |
-| DELETE | /api/admin/products/{productId}                     | Delete a product (admin)                      |
-| PUT    | /api/products/{productId}/image                     | Update product image                           |
+| Method | Endpoint                                     | Description                                |
+|--------|----------------------------------------------|--------------------------------------------|
+| GET    | /api/public/products                         | Get all products (paginated)               |
+| GET    | /api/public/categories/{categoryId}/products | Get products by category (paginated)       |
+| GET    | /api/public/products/keyword/{keyword}       | Search products by keyword (paginated)     |
+| POST   | /api/admin/categories/{categoryId}/product   | Create a new product in a category (admin) |
+| PUT    | /api/admin/products/{productId}              | Update an existing product (admin)         |
+| DELETE | /api/admin/products/{productId}              | Delete a product (admin)                   |
+| PUT    | /api/products/{productId}/image              | Update product image                       |
 
 ### Pagination and Sorting
 
 All collection endpoints support pagination/sorting parameters:
+
 - `pageNumber` (default: 0)
 - `pageSize` (default: 10)
 - `sortBy` (endpoint-specific default)
 - `sortOrder`: `asc` or `desc` (default: `asc`)
 
 Example:
+
 ```
 GET /api/public/products?pageNumber=0&pageSize=10&sortBy=price&sortOrder=desc
 ```
@@ -171,7 +175,8 @@ mvn test
 
 ## 🗓️ Changelog
 
-- 2025-08-14: Upgraded docs and configuration; verified JWT via HttpOnly cookies and stateless security; confirmed seeded users and whitelist; aligned README and project documentation; updated versions (Java 21, Spring Boot 3.5.4).
+- 2025-08-14: Upgraded docs and configuration; verified JWT via HttpOnly cookies and stateless security; confirmed
+  seeded users and whitelist; aligned README and project documentation; updated versions (Java 21, Spring Boot 3.5.4).
 
 ## 📄 License
 
